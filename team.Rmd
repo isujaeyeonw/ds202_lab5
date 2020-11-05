@@ -1,7 +1,7 @@
 ---
-title: "Lab #5"
-author: "Jaeyeon Won"
-date: "11/4/2020"
+title: 'Lab #5'
+author: "Jaeyeon Won, Jay Maxwell"
+date: "11/5/2020"
 output: html_document
 ---
 
@@ -332,35 +332,3 @@ ggplot(states, aes(x = long, y = lat)) +
 In 2017, Summer officially started on June 20 and ended on September 22, and Winter officially started on December 21 and ended on March 20, 2018. Additionally, the Winter of 2016 officially ended on March 20, 2017. Since the data sets only contain the accidents in 2017, I considered the Winter period from January 1 to March 20 and from December 21 to December 31. In order define "the level of danger", the total number of accidents was used.
 
 Based on the box plot, the overall pattern can be detected. There were more number of accidents over the Summer than the Winter. From the maps, more detailed information can be obtained, on a state level. The Summer data is colored in red, and the Winter data is colored in blue. In both maps, the darker colors indicate the higher number of accidents. It is very clear that the number of accidents were the highest in California, Texas, and Florida regardless of the season.
-
-
-
-
-
-
-
-
-```{r}
-# If I wanted to add state abb in the maps
-# states_abb
-#states_abb = read.csv("statelatlong.csv")
-
-#states_abb = states_abb %>%
-#  filter(!State %in% c('AK', 'HI'))
-
-#  geom_text(data = states_abb, 
-#            aes(x = Longitude, y = Latitude, label = State), color = 'white') +
-
-
-
-# Location of the text
-#acc_season_state_loc = acc_season_state_text %>% 
-#  group_by(STATE) %>% 
-#  summarise(long = mean(long, na.rm = TRUE), lat = mean(lat, na.rm = TRUE))
-```
-
-
-
-
-
-
