@@ -9,16 +9,72 @@ output: html_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 
-library(tidyverse)
-library(readxl)
+#load data
+acc <- read.csv("accident.csv", stringsAsFactors = FALSE)
+per <- read.csv("person.csv", stringsAsFactors = FALSE)
 
 ```
 
 1. Are there some days of the week where more accidents happen than the others (see FARS manual, use variable DAY_WEEK)?
+
+```{r}
+#load libraries
+
+library(tidyverse)
+library(ggplot2)
+
+
+#remoate data
+# acc <- read.csv("https://raw.githubusercontent.com/xdaiISU/ds202materials/master/hwlabs/fars2017/accident.csv", stringsAsFactors = FALSE)
+# per <- read.csv("https://raw.githubusercontent.com/xdaiISU/ds202materials/master/hwlabs/fars2017/person.csv", stringsAsFactors = FALSE)
+
+# change from int into to factor & rename the levels
+acc$DAY_WEEK <- as.factor(acc$DAY_WEEK)
+levels(acc$DAY_WEEK) <- c("Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday")
+
+acc %>% group_by(DAY_WEEK) %>% 
+  summarise(acc_count = n()) %>% 
+  arrange(desc(acc_count))
+```
+
+In this dataset, Saturdays are the most frequent days on which accidenets occur. 
+
+<hr>
 2. Create a data frame containing the persons who are fatally hurt in the accidents (look up variable INJ_SEV)
+
+```{r}
+per_fatal <- per %>% filter(INJ_SEV==4)
+
+str(per_fatal)
+
+```
+
+<hr>
 3. Create a data frame containing the most dangerous vehicle make in each state. The number of persons fatally hit in the vehicle make is used to assess the (non-)safety of a make. Make sure to handle the missing values appropriately. (look up variable MAKE)
+
+```{r}
+dangerous <- per_fatal %>% 
+  filter(!is.na(MAKE)) %>%
+  group_by(STATE, MAKE) %>%
+  summarise(acc_count = n()) %>%
+  group_by(STATE) %>% filter(acc_count == max(acc_count))
+dangerous
+```
+
+If I were to refactor and put new levels into all the states and car makes, the above would show you the state name and the most dangerous vehicle in that state. For reference, (12) ford, (20) chrevrolte (49) toyota (37) honda Are different makes in the top of the states. That is not suprising, as those are all large comapnies with high vehicle counts all across the country. 
+
+
+<hr>
 4. Create a map, and label each state with the most dangerous vehicle. Discuss the definition of the most dangerous vehicle, and what you find from the map. (Hint: Read the description for the STATE and COUNTY columns in the FARS manual. The state & county codes are Geographic Locator Codes (GLCs) from the General Services Administration’s (GSA) publication. Use readxl::read_xlsx to read in the GLCs.)
+
+<hr>
 5. Join the accident and person table (work out which variable(s) to use)
+
+<hr>
 6. Tally the number of accidents by day of the week (DAY_WEEK), hour of the day (HOUR) and gender (SEX). Visualize the results.
+
+<hr>
 7. Now plot a choropleth map of the number of deaths on a county level.
+
+<hr>
 8. Is summer or winter more dangerous? Does this depend on states? Explore and explain.
