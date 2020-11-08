@@ -143,6 +143,10 @@ str(big_table)
 
 
 
+```{r}
+
+
+```
 
 
 
@@ -155,8 +159,11 @@ str(big_table)
 
 
 
+```{r}
+counties <- map_data('county')
+counties %>% ggplot(aes(x = long, y = lat))  + geom_polygon(aes(group = group)) + geom_path(aes(group=group), color="white") + ggtitle("Fatalities by County")
 
-
+```
 
 
 

@@ -24,6 +24,13 @@ library(lubridate)
 
 # Load Data
 
+<!-- comments/ edits from jay -->
+<!-- Jaeyon, you did a great job on this!! I have been struggling with my joins and getting my maps to work. -->
+
+<!-- the only suggestion I could make would be using a local copy of the data instead of loading it off of prof's github everytime! -->
+
+
+
 ```{r}
 # Accident
 acc = read.csv("https://raw.githubusercontent.com/xdaiISU/ds202materials/master/hwlabs/fars2017/accident.csv", stringsAsFactors = FALSE)
