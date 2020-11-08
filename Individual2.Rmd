@@ -37,7 +37,24 @@ acc %>% group_by(DAY_WEEK) %>%
   arrange(desc(acc_count))
 ```
 
-In this dataset, Saturdays are the most frequent days on which accidenets occur. 
+In this dataset, Saturdays are the most frequent days on which accidenets occur.
+
+
+
+# Jaeyeon's revision
+- You can also visualize this by
+acc %>%
+  group_by(DAY_WEEK) %>%
+  summarise(total_acc = n()) %>%
+  ggplot(aes(x = DAY_WEEK, weight = total_acc, fill = DAY_WEEK)) +
+  geom_bar() +
+  ggtitle('Barplot of Total Number of Accidents in 2017') +
+  xlab('Day') +
+  ylab('Total Number of Accidents') +
+  labs(fill = 'Day')
+  
+  
+  
 
 <hr>
 2. Create a data frame containing the persons who are fatally hurt in the accidents (look up variable INJ_SEV)
