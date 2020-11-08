@@ -88,13 +88,24 @@ If I were to refactor and put new levels into all the states and car makes, the 
 us = map_data('state')
 glc = read_xlsx('FRPP_GLC_-_United_StatesSep292020.xlsx')
 
-us %>% ggplot(aes(x=long,y=lat)) + geom_polygon(aes(group=group)) + geom_path(aes(group=group), color="white")
 
+dangerous$MAKE <- as.factor(dangerous$MAKE)
+glc <- glc %>% 
+  rename(state_code = `State Code`, state_name=`State Name`) %>%
+  mutate(state_name = tolower(state_name)) %>%
+  select(state_code, state_name)
+glc$state_code <- as.numeric(glc$state_code)
+
+
+us2 <- us %>% left_join(dangerous, by=c("group" = "STATE"))
+
+
+us2 %>% ggplot(aes(x=long,y=lat, fill=MAKE)) + geom_polygon(aes(group=group)) + geom_path(aes(group=group), color="black") + coord_map() + ggtitle("Most Dangerous Vehicle Make by State")
 ```
 
 
 
-
+I am not sure where the NAs are coming from. 
 
 
 From our analysys a few steps earlier, the most dangerous vehicle is regarded as the vehicle make in each state which has been involved in the highest count of fatal collisions.
@@ -144,7 +155,10 @@ str(big_table)
 
 
 ```{r}
-
+tally <- big_table %>% group_by(DAY_WEEK, HOUR, SEX) %>%
+  summarise(n=n()) %>%
+  arrange(DAY_WEEK)
+tally
 
 ```
 
