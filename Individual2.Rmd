@@ -22,7 +22,7 @@ per <- read.csv("person.csv", stringsAsFactors = FALSE)
 
 library(tidyverse)
 library(ggplot2)
-
+library(readxl)
 
 #remoate data
 # acc <- read.csv("https://raw.githubusercontent.com/xdaiISU/ds202materials/master/hwlabs/fars2017/accident.csv", stringsAsFactors = FALSE)
@@ -67,14 +67,90 @@ If I were to refactor and put new levels into all the states and car makes, the 
 <hr>
 4. Create a map, and label each state with the most dangerous vehicle. Discuss the definition of the most dangerous vehicle, and what you find from the map. (Hint: Read the description for the STATE and COUNTY columns in the FARS manual. The state & county codes are Geographic Locator Codes (GLCs) from the General Services Administration’s (GSA) publication. Use readxl::read_xlsx to read in the GLCs.)
 
+```{r}
+us = map_data('state')
+glc = read_xlsx('FRPP_GLC_-_United_StatesSep292020.xlsx')
+
+us %>% ggplot(aes(x=long,y=lat)) + geom_polygon(aes(group=group)) + geom_path(aes(group=group), color="white")
+
+```
+
+
+
+
+
+
+From our analysys a few steps earlier, the most dangerous vehicle is regarded as the vehicle make in each state which has been involved in the highest count of fatal collisions.
+
+
+
+
+
+
 <hr>
 5. Join the accident and person table (work out which variable(s) to use)
+
+
+
+
+```{r}
+big_table <- acc %>% select(DAY_WEEK, HOUR, STATE) %>% left_join(per %>% select(STATE, SEX), by='STATE')
+
+str(big_table)
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 <hr>
 6. Tally the number of accidents by day of the week (DAY_WEEK), hour of the day (HOUR) and gender (SEX). Visualize the results.
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 <hr>
 7. Now plot a choropleth map of the number of deaths on a county level.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 <hr>
 8. Is summer or winter more dangerous? Does this depend on states? Explore and explain.
