@@ -105,7 +105,7 @@ us2 %>% ggplot(aes(x=long,y=lat, fill=MAKE)) + geom_polygon(aes(group=group)) + 
 
 
 
-I am not sure where the NAs are coming from. 
+I am not sure where the NAs are coming from....
 
 
 From our analysys a few steps earlier, the most dangerous vehicle is regarded as the vehicle make in each state which has been involved in the highest count of fatal collisions.
@@ -172,10 +172,33 @@ tally
 
 
 
-
 ```{r}
+us = map_data('state')
 counties <- map_data('county')
-counties %>% ggplot(aes(x = long, y = lat))  + geom_polygon(aes(group = group)) + geom_path(aes(group=group), color="white") + ggtitle("Fatalities by County")
+glc7 = read_xlsx('FRPP_GLC_-_United_StatesSep292020.xlsx')
+glc7 %>% 
+  rename(county_code = `County Code`, county_name=`County Name`, state_name=`State Name`) %>% 
+  mutate(county_code = as.numeric(county_code), 
+         state_name = tolower(state_name), 
+         county_name = tolower(county_name)) %>%
+  select(county_code, county_name, state_name) -> glc8
+
+
+fatal_acc <- acc %>% 
+  group_by(COUNTY) %>% 
+  summarise(fatal_tot = sum(FATALS)) %>%
+  left_join(glc8, by =c('COUNTY' = 'county_code')) %>%
+  unique()
+
+
+
+
+
+g <- fatal_acc %>% 
+  left_join(counties, by =c("county_name" = "subregion", "state_name"="region")) %>%
+  ggplot(aes(x = long, y = lat, fill=fatal_tot))  + geom_polygon(aes(group = group)) + ggtitle("Fatalities by County") + coord_map()
+g
+
 
 ```
 
@@ -192,3 +215,44 @@ counties %>% ggplot(aes(x = long, y = lat))  + geom_polygon(aes(group = group)) 
 
 <hr>
 8. Is summer or winter more dangerous? Does this depend on states? Explore and explain.
+
+
+```{r}
+
+us = map_data('state')
+glc = read_xlsx('FRPP_GLC_-_United_StatesSep292020.xlsx')
+
+glc8 <- glc %>% 
+  rename(state_code = `State Code`, state_name=`State Name`) %>%
+  mutate(state_name = tolower(state_name),
+         state_code = as.numeric(state_code)) %>%
+  select(state_code, state_name)
+
+summer_fatal2 <- acc %>% 
+  filter(MONTH %in% c(6,7,8)) %>%
+  group_by(STATE) %>% 
+  summarise(fatal_tot = sum(FATALS)) %>%
+  left_join(glc8, by = c("STATE" = "state_code")) %>%
+  unique()
+
+
+us4 <- us %>% left_join(summer_fatal2, by=c("group" = "STATE")) 
+
+
+us4 %>%
+ggplot(aes(x = long, y = lat))  + 
+  geom_polygon(aes(group = group, fill=fatal_tot)) + ggtitle("Summer Fatalities by State") + coord_map() +  scale_fill_gradient(low = "white", high = "red")
+
+winter_fatal2 <- acc %>% 
+  filter(MONTH %in% c(12,2,1)) %>%
+  group_by(STATE) %>% 
+  summarise(fatal_tot = sum(FATALS))
+
+
+us %>% left_join(winter_fatal2, by=c("group" = "STATE")) %>%
+  ggplot(aes(x = long, y = lat))  + 
+  geom_polygon(aes(group = group, fill=fatal_tot)) + ggtitle("Winter Fatalities by State") + coord_map() +  scale_fill_gradient(low = "white", high = "blue")
+
+```
+
+I have no clue why my states aren't colored appropriately or why some of my data gets lost in a join.... Texas should be very dark, because it has a high number. I can verify that in the data frames going into the map. 
