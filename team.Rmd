@@ -26,10 +26,10 @@ library(lubridate)
 
 ```{r}
 # Accident
-acc = read.csv("https://raw.githubusercontent.com/xdaiISU/ds202materials/master/hwlabs/fars2017/accident.csv", stringsAsFactors = FALSE)
+acc = read.csv("accident.csv", stringsAsFactors = FALSE)
 
 # Person
-person = read.csv("https://raw.githubusercontent.com/xdaiISU/ds202materials/master/hwlabs/fars2017/person.csv", stringsAsFactors = FALSE)
+person = read.csv("person.csv", stringsAsFactors = FALSE)
 ```
 
 <hr>
