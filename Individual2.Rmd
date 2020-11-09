@@ -90,17 +90,42 @@ glc = read_xlsx('FRPP_GLC_-_United_StatesSep292020.xlsx')
 
 
 dangerous$MAKE <- as.factor(dangerous$MAKE)
-glc <- glc %>% 
+glc2 <- glc %>% 
   rename(state_code = `State Code`, state_name=`State Name`) %>%
   mutate(state_name = tolower(state_name)) %>%
   select(state_code, state_name)
-glc$state_code <- as.numeric(glc$state_code)
+
 
 
 us2 <- us %>% left_join(dangerous, by=c("group" = "STATE"))
 
 
-us2 %>% ggplot(aes(x=long,y=lat, fill=MAKE)) + geom_polygon(aes(group=group)) + geom_path(aes(group=group), color="black") + coord_map() + ggtitle("Most Dangerous Vehicle Make by State")
+us2 %>% ggplot(aes(x=long,y=lat, fill=MAKE)) + geom_polygon(aes(group=group)) + geom_path(aes(group=group), color="black") + coord_map()
+
+
+
+state_label_locations <- us %>% group_by(group) %>% summarise(long=mean(long),lat=mean(lat))
+
+
+
+
+danger_labels <- glc2 %>% mutate(state_code = as.numeric(state_code)) %>%
+  left_join(dangerous, by=c("state_code" = "STATE")) %>%
+  left_join(us, by = c("state_name" = "region")) %>%
+  distinct(state_code, state_name, MAKE, acc_count) %>%
+  filter(!(MAKE == 12 & state_code==8)) %>%
+  filter(!(MAKE==12 & state_code==34)) %>%
+  filter(!(MAKE==37 & state_code==50)) %>%
+  left_join(state_label_locations, by = c("state_code" = "group"))
+
+
+
+
+
+us2 <- us %>% left_join(dangerous, by=c("group" = "STATE"))
+
+
+us2 %>% ggplot(aes(x=long,y=lat)) + geom_polygon(aes(group=group)) + geom_path(aes(group=group), color="white") + coord_map() + geom_text(data=danger_labels, aes(x=long, y=lat, label=MAKE)) + ggtitle("Dangerous vehicle Make by State")
 ```
 
 
