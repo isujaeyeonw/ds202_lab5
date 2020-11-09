@@ -236,23 +236,28 @@ summer_fatal2 <- acc %>%
   unique()
 
 
-us4 <- us %>% left_join(summer_fatal2, by=c("group" = "STATE")) 
+us8 <- us %>% left_join(summer_fatal2, by=c("region" = "state_name")) 
 
 
-us4 %>%
-ggplot(aes(x = long, y = lat))  + 
-  geom_polygon(aes(group = group, fill=fatal_tot)) + ggtitle("Summer Fatalities by State") + coord_map() +  scale_fill_gradient(low = "white", high = "red")
+us8 %>%
+ggplot(aes(x = long, y = lat, fill=fatal_tot))  + 
+  geom_polygon(aes(group = group)) + ggtitle("Summer Fatalities by State") + coord_map() +  scale_fill_gradient(low = "white", high = "red")
+
+
+
 
 winter_fatal2 <- acc %>% 
   filter(MONTH %in% c(12,2,1)) %>%
   group_by(STATE) %>% 
-  summarise(fatal_tot = sum(FATALS))
+  summarise(fatal_tot = sum(FATALS)) %>%
+  left_join(glc8, by = c("STATE" = "state_code")) %>%
+  unique()
 
 
-us %>% left_join(winter_fatal2, by=c("group" = "STATE")) %>%
-  ggplot(aes(x = long, y = lat))  + 
-  geom_polygon(aes(group = group, fill=fatal_tot)) + ggtitle("Winter Fatalities by State") + coord_map() +  scale_fill_gradient(low = "white", high = "blue")
+us %>% left_join(winter_fatal2, by=c("region" = "state_name")) %>%
+  ggplot(aes(x = long, y = lat, fill=fatal_tot))  + 
+  geom_polygon(aes(group = group)) + ggtitle("Winter Fatalities by State") + coord_map() +  scale_fill_gradient(low = "white", high = "blue")
 
 ```
 
-I have no clue why my states aren't colored appropriately or why some of my data gets lost in a join.... Texas should be very dark, because it has a high number. I can verify that in the data frames going into the map. 
+No matter the season, Florida, California and Texas have the highest number of fatal accidents. That should not be surprising, as they have high populations and receive a lot of visitor traffic. 
